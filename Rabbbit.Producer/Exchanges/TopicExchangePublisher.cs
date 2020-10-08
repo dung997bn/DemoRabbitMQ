@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Rabbbit.Producer.Exchanges
 {
-    public static class DirectExchangePublisher
+    public static class TopicExchangePublisher
     {
         public static void Publish(IModel chanel)
         {
@@ -18,13 +18,13 @@ namespace Rabbbit.Producer.Exchanges
                 {"x-message-ttl", 30000 }
             };
 
-            chanel.ExchangeDeclare(exchange: "demo-direct-exchange", type: ExchangeType.Direct, arguments: ttl);
+            chanel.ExchangeDeclare(exchange: "demo-topic-exchange", type: ExchangeType.Topic, arguments: ttl);
             var count = 0;
             while (true)
             {
                 var message = new { Name = "Producer", Message = "Hello Count " + count };
                 var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
-                chanel.BasicPublish(exchange: "demo-direct-exchange", routingKey: "account.init", null, body);
+                chanel.BasicPublish(exchange: "demo-topic-exchange", routingKey: "account.update", null, body);
                 count++;
                 Console.WriteLine(message);
                 Thread.Sleep(2000);

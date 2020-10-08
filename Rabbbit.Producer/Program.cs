@@ -22,7 +22,7 @@ namespace Rabbbit.Producer
                 using (var chanel=connection.CreateModel())
                 {
                     //QueueProducer.Publish(chanel);
-                    DirectExchangePublisher.Publish(chanel);
+                    FanoutExchangePublisher.Publish(chanel);
                 }
             }
 

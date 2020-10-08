@@ -19,7 +19,7 @@ namespace Rabbit.Consumer
             {
                 using (var chanel = connection.CreateModel())
                 {
-                    DirectExchangeConsumer.Consume(chanel);
+                    FanoutExchangeConsumer.Consume(chanel);
                 }
             }
 

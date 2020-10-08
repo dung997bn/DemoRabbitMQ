@@ -9,25 +9,29 @@ using System.Threading.Tasks;
 
 namespace Rabbbit.Producer.Exchanges
 {
-    public static class DirectExchangePublisher
+   public static class FanoutExchangePublisher
     {
-        public static void Publish(IModel chanel)
+        public static void Publish(IModel channel)
         {
             var ttl = new Dictionary<string, object>
             {
                 {"x-message-ttl", 30000 }
             };
-
-            chanel.ExchangeDeclare(exchange: "demo-direct-exchange", type: ExchangeType.Direct, arguments: ttl);
+            channel.ExchangeDeclare("demo-fanout-exchange", ExchangeType.Fanout, arguments: ttl);
             var count = 0;
+
             while (true)
             {
-                var message = new { Name = "Producer", Message = "Hello Count " + count };
+                var message = new { Name = "Producer", Message = $"Hello! Count: {count}" };
                 var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
-                chanel.BasicPublish(exchange: "demo-direct-exchange", routingKey: "account.init", null, body);
+
+                var properties = channel.CreateBasicProperties();
+                properties.Headers = new Dictionary<string, object> { { "account", "update" } };
+
+                channel.BasicPublish("demo-fanout-exchange", "account.new", properties, body);
                 count++;
                 Console.WriteLine(message);
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
             }
         }
     }
